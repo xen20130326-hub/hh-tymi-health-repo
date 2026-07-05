@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Details - TYMI Health</title>
+    <link rel="stylesheet" href="../style.css">
+    <style>
+        .detail-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        .detail-item h4 {
+            margin-bottom: 5px;
+            color: var(--primary-blue);
+            border-bottom: 1px solid #eee;
+            padding-bottom: 5px;
+        }
+        .triage-banner {
+            padding: 15px;
+            border-radius: 8px;
+            color: white;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">TYMI Health Companion</div>
+        <div class="nav-links">
+            <a href="../index.html" style="color: white; margin-right: 15px;">Dashboard</a>
+            <a href="patients.html" style="color: white;">Add Patient</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div id="triage-banner" class="triage-banner" style="display: none;"></div>
+        
+        <div class="card">
+            <h2 id="patient-name">Loading...</h2>
+            <p id="patient-basic-info"></p>
+        </div>
+
+        <div class="detail-grid">
+            <div class="card detail-item">
+                <h4>Potential Illness/Disease</h4>
+                <p id="detail-illness"></p>
+            </div>
+            <div class="card detail-item">
+                <h4>Recommended Scan Reports/Tests</h4>
+                <p id="detail-scans"></p>
+            </div>
+            <div class="card detail-item">
+                <h4>Suggested Medicines</h4>
+                <p id="detail-medicines"></p>
+            </div>
+            <div class="card detail-item">
+                <h4>Nutrition & Meals</h4>
+                <p id="detail-nutrition"></p>
+            </div>
+            <div class="card detail-item">
+                <h4>Hydration Plan</h4>
+                <p id="detail-hydration"></p>
+            </div>
+            <div class="card detail-item">
+                <h4>Rest & Sleep</h4>
+                <p id="detail-rest"></p>
+            </div>
+            <div class="card detail-item">
+                <h4>Things to Avoid</h4>
+                <p id="detail-avoid" style="color: var(--red);"></p>
+            </div>
+            <div class="card detail-item">
+                <h4>Special Medical Notes</h4>
+                <p id="detail-notes"></p>
+            </div>
+        </div>
+    </div>
+
+    <script src="../config/config.js"></script>
+    <script src="../app.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const patientId = urlParams.get('id');
+            
+            if (!patientId) {
+                alert('No patient ID provided');
+                window.location.href = '../index.html';
+                return;
+            }
+
+            try {
+                const response = await fetch(`${CONFIG.API_BASE_URL}/patients/${patientId}`);
+                const p = await response.json();
+
+                if (p.error) {
+                    alert('Patient not found');
+                    window.location.href = '../index.html';
+                    return;
+                }
+
+                // Fill UI
+                document.getElementById('patient-name').innerText = p.name;
+                document.getElementById('patient-basic-info').innerText = `Age: ${p.age} | Weight: ${p.weight}kg | Height: ${p.height}cm | BP: ${p.bp}`;
+                
+                const banner = document.getElementById('triage-banner');
+                banner.innerText = `Triage Status: ${p.triage_status} - ${p.recommendation}`;
+                banner.className = `triage-banner triage-${p.triage_status.toLowerCase()}`;
+                banner.style.display = 'block';
+
+                document.getElementById('detail-illness').innerText = p.illness || 'N/A';
+                document.getElementById('detail-scans').innerText = p.scan_reports || 'N/A';
+                document.getElementById('detail-medicines').innerText = p.medicines || 'N/A';
+                document.getElementById('detail-nutrition').innerText = p.nutrition || 'N/A';
+                document.getElementById('detail-hydration').innerText = p.hydration || 'N/A';
+                document.getElementById('detail-rest').innerText = p.rest || 'N/A';
+                document.getElementById('detail-avoid').innerText = p.avoid || 'N/A';
+                document.getElementById('detail-notes').innerText = p.special_notes || 'N/A';
+
+            } catch (error) {
+                console.error('Error fetching patient details:', error);
+                alert('Failed to load patient details');
+            }
+        });
+    </script>
+</body>
+</html>

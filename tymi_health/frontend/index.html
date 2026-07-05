@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TYMI Health Companion</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">TYMI Health Companion</div>
+        <div class="nav-links">
+            <a href="index.html" style="color: white; margin-right: 15px;">Dashboard</a>
+            <a href="pages/patients.html" style="color: white;">Add Patient</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1>Nurse Triage Dashboard</h1>
+        <div id="dashboard-stats" class="card" style="display: flex; justify-content: space-around;">
+            <div>Total Patients: <span id="total-count">0</span></div>
+            <div>Critical (Red): <span id="red-count">0</span></div>
+        </div>
+
+        <div class="card">
+            <h3>Recent Patients</h3>
+            <table style="width: 100%; border-collapse: collapse;">
+                <thead>
+                    <tr style="border-bottom: 2px solid #eee; text-align: left;">
+                        <th>Name</th>
+                        <th>Age</th>
+                        <th>Symptoms</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="patient-list">
+                    <!-- Loaded via JS -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="config/config.js"></script>
+    <script src="app.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            loadPatients();
+        });
+    </script>
+</body>
+</html>
